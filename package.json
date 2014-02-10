@@ -23,7 +23,7 @@
     "web",
     "site"
   ],
-  "author": "Cubet Techno Labs, Cochin <info@cubettech.com>",
+  "author": "cubettech<info@cubettech.com>",
   "description": "Sleek.js is an MVC Framework implemented from Node.JS, built-in with base dependency on handlebars.js, express.js. Sleek.js architecture follows common format of MVC which makes it easy to handle and build better web apps with pluggable modules & themes support.",
   "contributors": [ 
     {
