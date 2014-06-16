@@ -9,6 +9,6 @@
 
 global.DEFINES = {
     HELLO: 'Hello'
-}
+};
 
 

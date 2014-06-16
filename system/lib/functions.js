@@ -57,32 +57,6 @@ var fns = {
         } catch (err) {}
             return undefined;
     },
-    _getCalleeFile: function() {
-        try {
-            var err = new Error(),callerfile,currentfile; 
-            err.stack.shift();
-            Error.prepareStackTrace = function (err, stack) {return stack;};
-            currentfile=err.stack.shift().getFileName();
-            while (err.stack.length) {
-                callerfile = err.stack.shift().getFileName();
-                if(currentfile!==callerfile) return callerfile;
-            }
-        } catch (err) {}
-            return undefined;
-    },
-    _getCalleeLine: function(){
-       try {
-           var err = new Error(),callerfile,currentfile;      
-           Error.prepareStackTrace = function (err, stack) {return stack;};
-           err.stack.shift();
-           currentfile=err.stack.shift().getLineNumber();
-           while (err.stack.length) {
-               callerfile = err.stack.shift().getLineNumber();
-               if(currentfile!==callerfile) return callerfile;
-           }
-       } catch (err) {}
-           return undefined;
-    },
     _rand: function(count)
     {
         count = typeof count !== 'undefined' ? count : 12;

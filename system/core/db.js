@@ -43,7 +43,7 @@ try {
         var options = {
           user: sleekConfig.dbUser,
           pass: sleekConfig.dbPass
-        }
+        };
         mongoose.connect('mongodb://'+sleekConfig.dbHost+':'+sleekConfig.dbPort+'/' + sleekConfig.dbName, options);
     }
     

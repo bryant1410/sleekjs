@@ -13,7 +13,7 @@ var userModel = {
             callback(results);
         });
     }
-}
+};
 
 module.exports = userModel;
 

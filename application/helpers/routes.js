@@ -34,9 +34,11 @@
 
 //define route functions here
 var routeHelper = {
-    helper: function(){
-        console.log ('helper is working fine');
+    helper: function(req,res,next){
+        //don't forget to use next(), if the helper is used as a middleware
+        console.log ('I am a middleware function');
+        next();
     }
-}
+};
 
 module.exports = routeHelper;

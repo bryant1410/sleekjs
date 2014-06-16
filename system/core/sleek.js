@@ -40,8 +40,7 @@ require(path.join(appPath,'application/config/defines.js'));
 require('./db.js');
 require(path.join(appPath,'system/lib/handhelpers.js'));
 var _fns = require(path.join(appPath,'system/lib/functions.js'));
-
-//for pluggins
+//get a copy of request for plugins
 app.use(function(req,res,next){
         res.sleekReq = req;
         next();
@@ -59,8 +58,6 @@ app.use(function(err, req, res, next){
     var compiled = template({ title:'Application Error', error: err.stack });
     res.send(compiled);
 });
-
-app.use(app.router);
 
 //load custom config libraries
 if(sleekConfig.configLibs){
@@ -396,14 +393,13 @@ global.system = {
      * @Date 23-10-2013
      */
     log: function(str, status){
-       var cf = _fns._getCalleeFile();
-       var cl = _fns._getCalleeLine();
        if(!status) {
            status = 'Error';
        }
        if(str) {
-           var log = status + ' :: ' + new Date() + ' :\n';
-           log += str + ' - ' + cf + ' on line ' + cl + '\n';
+           if(str.stack) str = str.stack;
+           var log = '\n' + status + ' :: ' + new Date() + ' :\n';
+           log += str +'\n';
            if(sleekConfig.logToFile == true) {
                fs.appendFile(path.join(appPath, sleekConfig.systemlog), log, function (err) {});
            } else {
@@ -693,7 +689,6 @@ module.exports = function(app){
             } else {
                 app.get(rout, commonfns, fn, rts[c][act]);
             }
-
         }
         
         //file server for plugins & themes

@@ -32,39 +32,45 @@
  */
 
 //require our needs
-var express = require('express');
-var http = require('http');
-var path = require('path');
-var exphbs  = require('express3-handlebars');
-var helmet  = require('helmet');
+var express = require('express'),
+http = require('http'),
+path = require('path'),
+exphbs  = require('express3-handlebars'),
+helmet  = require('helmet'),
+cookieParser = require('cookie-parser'),
+session      = require('express-session'),
+favicon = require('serve-favicon'),
+json        = require('json'),
+urlencoded   = require('urlencode'),
+errorHandler   = require('errorhandler'),
+bodyParser = require('body-parser'),
+methodOverride = require('method-override');
 global.app = express();
 
 global.sleekConfig = {};
 require(path.join(__dirname,'application/config/config.js'));
-app.configure(function(){
-    app.set('env', sleekConfig.env);
-    // all environments
-    app.set('port', process.env.PORT || sleekConfig.appPort);
-    app.set('host', sleekConfig.appHost ? sleekConfig.appHost : 'localhost');
-    app.set('views', path.join(__dirname, 'application/views'));
-    app.set('view engine', 'handlebars');
-    app.engine('html',  exphbs({defaultLayout: 'default',
-                                layoutsDir: path.join(__dirname, 'application/layouts/'), extname:".html"})
-                ); 
-    app.use(express.favicon(path.join(__dirname, 'public/favicon.ico'))); 
-    app.use(express.logger('dev'));
-    app.use(express.json());
-    app.use(express.urlencoded());  
-    app.use(helmet.xframe());
-    app.use(helmet.iexss());
-    app.use(helmet.contentTypeOptions());
-    app.use(helmet.cacheControl());
-    app.use(express.methodOverride());
-    app.use(express.cookieParser('CubEtNoDeSlEek'));
-    app.use(express.session());
-    app.use(express.static(path.join(__dirname, 'public')));
-    app.set('strict routing');
-});
+   
+app.set('env', sleekConfig.env);
+// all environments
+app.set('port', process.env.PORT || sleekConfig.appPort);
+app.set('host', sleekConfig.appHost ? sleekConfig.appHost : 'localhost');
+app.set('views', path.join(__dirname, 'application/views'));
+app.set('view engine', 'handlebars');
+app.engine('html',  exphbs({defaultLayout: 'default',
+                            layoutsDir: path.join(__dirname, 'application/layouts/'), extname:".html"})
+            ); 
+app.use(favicon(path.join(__dirname, 'public/favicon.ico'))); 
+app.use(bodyParser());
+app.use(helmet.xframe());
+app.use(helmet.iexss());
+app.use(helmet.contentTypeOptions());
+app.use(helmet.cacheControl());
+app.use(methodOverride());
+app.use(cookieParser('CubEtNoDeSlEek'));
+app.use(session());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(errorHandler());
+app.set('strict routing');
 
 //set Site url
 global.sleekConfig.siteUrl = 'http://'+app.get('host')+':'+app.get('port');
@@ -72,13 +78,8 @@ global.sleekConfig.siteUrl = 'http://'+app.get('host')+':'+app.get('port');
 require('./system/core/sleek.js')(app);
 // development only
 if ('development' == app.get('env')) {
-    app.use(express.errorHandler());
-} else {
-    //prevent crash
-    process.on('uncaughtException', function (exception) {
-        console.log(exception);
-    });
-}
+    //
+} 
 
 var server = http.createServer(app);
 try {

@@ -36,4 +36,4 @@ module.exports = {
     dbName : 'nodetest',
     dbUser : '',
     dbPass : ''
-}
+};

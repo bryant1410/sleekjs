@@ -37,4 +37,4 @@ module.exports = {
     dbName : 'sleek',
     dbUser : '',
     dbPass : ''
-}
+};

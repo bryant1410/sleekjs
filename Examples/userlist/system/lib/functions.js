@@ -60,7 +60,7 @@ var fns = {
     _getCalleeFile: function() {
         try {
             var err = new Error(),callerfile,currentfile; 
-            err.stack.shift();
+            //err.stack.shift();
             Error.prepareStackTrace = function (err, stack) {return stack;};
             currentfile=err.stack.shift().getFileName();
             while (err.stack.length) {

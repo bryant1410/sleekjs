@@ -15,7 +15,7 @@ var indexController = {
         M.list(function(resl){
            var data = {
             title: "Appended Comment Plugin"
-            }
+            };
             try{
                 clbk(system.getCompiledPluginView('home/index', data));
             } catch(err){
@@ -28,7 +28,7 @@ var indexController = {
         M.list(function(resl){
            var data = {
             title: "replaced Comment Plugin"
-            }
+            };
             try{
                 clbk(system.getCompiledPluginView('home/index', data));
             } catch(err){
@@ -41,10 +41,10 @@ var indexController = {
         M.list(function(resl){
            var data = {
             title: "Comment Plugin"
-            }
+            };
             system.loadPluginView(res,'home/index', data);
         });
     }
-}
+};
 
 module.exports = indexController;
