@@ -535,7 +535,7 @@ global.system = {
 
                         for(var count in data.css) {
                             if (fs.existsSync(path.join(appPath,'modules', plugin, 'assets', 'css', data.css[count]+'.css'))) {
-                                scripts += '<link rel="stylesheet" href="'+path.join('/assets', plugin, 'css', data.css[count]+'.css')+'"/>\n';
+                                scripts += '<link rel="stylesheet" href="'+path.join('/assets','modules', plugin, 'css', data.css[count]+'.css')+'"/>\n';
                             } else if(fs.existsSync(path.join(appPath,'public', sleekConfig.theme, 'css', data.css[count]+'.css'))) {
                                 scripts += '<link rel="stylesheet" href="'+path.join('/', sleekConfig.theme, 'css', data.css[count]+'.css')+'"/>\n';
                             } else {
@@ -623,6 +623,22 @@ global.system = {
 
 module.exports = function(app){
     try {
+
+        
+        //file server for plugins & themes
+        app.get('/assets/:mod?/:plugin?/:type?/:file*?', function(req, res){
+            var filepath = req.params.file + (req.params[0] || '');
+            if(!req.params.plugin || !req.params.type || !req.params.file || !req.params.mod) {
+                res.end();
+                return false;
+            } 
+            if(req.params.mod == 'modules'){
+                res.sendfile(path.join(appPath,'modules',req.params.plugin,'assets',req.params.type,filepath));
+            } else if (req.params.mod == 'themes') {
+                res.sendfile(path.join(appPath,'application/views',req.params.plugin,'assets',req.params.type,filepath));
+            }
+        });
+
         //set commons
         var R = require(path.join(appPath, 'application/config/routes.js'));
         var Helper = require(path.join(appPath, 'application/helpers/routes.js'));
@@ -690,19 +706,6 @@ module.exports = function(app){
                 app.get(rout, commonfns, fn, rts[c][act]);
             }
         }
-        
-        //file server for plugins & themes
-        app.get('/assets/:mod?/:plugin?/:type?/:file?', function(req, res){
-            if(!req.params.plugin || !req.params.type || !req.params.file || !req.params.mod) {
-                res.end();
-                return false;
-            } 
-            if(req.params.mod == 'modules'){
-                res.sendfile(path.join(appPath,'modules',req.params.plugin,'assets',req.params.type,req.params.file));
-            } else if (req.params.mod == 'themes') {
-                res.sendfile(path.join(appPath,'application/views',req.params.plugin,'assets',req.params.type,req.params.file));
-            }
-        });
 
         //handle unknown requests
         app.get('*/([A-Za-z0-9_]+)', function(req, res){
