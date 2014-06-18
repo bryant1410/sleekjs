@@ -36,8 +36,8 @@ var fs = require('fs');
 var async = require('async');
 global.appPath = path.dirname(require.main.filename);
 global.HELPER ={};
-require(path.join(appPath,'application/config/defines.js'));
-require('./db.js');
+//get defines
+__def = require(path.join(appPath,'application/config/defines.js'));
 require(path.join(appPath,'system/lib/handhelpers.js'));
 var _fns = require(path.join(appPath,'system/lib/functions.js'));
 //get a copy of request for plugins
@@ -72,7 +72,7 @@ if(sleekConfig.configLibs){
 }
 
 //set loggings as in config
-if(sleekConfig.logToFile == true) {
+if(sleekConfig.logToFile === true) {
     var access = fs.createWriteStream(path.join(appPath, sleekConfig.accesslog), {
         flags:'a'
     });
@@ -187,16 +187,16 @@ global.system = {
                 if(stats.isDirectory() && plug.charAt(0) != '.'){
                     var Ovr = require(path.join(appPath,'modules',plug, 'override.js'));
                     async.eachSeries(Ovr.data, function (ovdta, _ovdbk) {
-                        if(ovdta.view == partial){
+                        if(ovdta.view === partial){
                             var _m = ovdta.mode;
-                            if (_m == 'prepend' || _m == 'append' || _m == 'replace') {
+                            if (_m === 'prepend' || _m === 'append' || _m === 'replace') {
                                 if(ovdta.controller && ovdta.action){
                                     var M = system.getPluginController(ovdta.controller,plug);
                                     var fn = M[ovdta.action];
                                     fn(function(dt){
-                                        if(_m == 'prepend') {
+                                        if(_m === 'prepend') {
                                             template = dt + template;
-                                        } else if (_m == 'append') {
+                                        } else if (_m === 'append') {
                                             template += dt;
                                         } else {
                                             template = template;
@@ -206,9 +206,9 @@ global.system = {
                                 } else {
                                     realPath  = path.join(appPath,'modules',plug,'views',partial+'.html');
                                     var dt = fs.readFileSync(realPath, 'utf8');
-                                    if(_m == 'prepend') {
+                                    if(_m === 'prepend') {
                                         template = dt + template;
-                                    } else if (_m == 'append') {
+                                    } else if (_m === 'append') {
                                         template += dt;
                                     } else {
                                         template = template;
@@ -254,7 +254,7 @@ global.system = {
             if(!plugin){
                 var pt = _fns._getCallerFile();
                 plugin = pt.split('/');
-                if(plugin[plugin.indexOf('controllers')-2] == 'modules') {
+                if(plugin[plugin.indexOf('controllers')-2] === 'modules') {
                     plugin = plugin[plugin.indexOf('controllers')-1]
                 } else {
                     this.log('Please specify plugin name');
@@ -295,10 +295,10 @@ global.system = {
                 if(stats.isDirectory() && plug.charAt(0) != '.' && fs.existsSync(path.join(appPath,'modules',plug,'override.js'))){
                     var Ovr = require(path.join(appPath,'modules',plug, 'override.js'));
                     async.eachSeries(Ovr.data, function (_ovDt, _ovcbk) {
-                        if(_ovDt.view == view && caller == 'application'){
+                        if(_ovDt.view === view && caller === 'application'){
                             var prio = _ovDt.priority ? _ovDt.priority : 0;
                             var _mode = _ovDt.mode;
-                            if(_mode == 'append' || _mode == 'prepend' || _mode == 'replace'){
+                            if(_mode === 'append' || _mode === 'prepend' || _mode === 'replace'){
                                 passedData.locals = res.locals;
                                 if(!passedData.PLUGINS){
                                     passedData.PLUGINS =  [];
@@ -400,7 +400,7 @@ global.system = {
            if(str.stack) str = str.stack;
            var log = '\n' + status + ' :: ' + new Date() + ' :\n';
            log += str +'\n';
-           if(sleekConfig.logToFile == true) {
+           if(sleekConfig.logToFile === true) {
                fs.appendFile(path.join(appPath, sleekConfig.systemlog), log, function (err) {});
            } else {
                console.log(log);
@@ -478,10 +478,10 @@ global.system = {
             if(!plugin){
                 var pt = _fns._getCallerFile();
                 plugin = pt.split('/');
-                if(plugin[plugin.indexOf('controllers')-2] == 'modules') {
+                if(plugin[plugin.indexOf('controllers')-2] === 'modules') {
                     plugin = plugin[plugin.indexOf('controllers')-1]
                 } else {
-                    this.log('Please specify plugin name')
+                    this.log('Please specify plugin name');
                 }
             }
             
@@ -508,7 +508,7 @@ global.system = {
             if(!plugin){
                 var pt = _fns._getCallerFile();
                 plugin = pt.split('/');
-                if(plugin[plugin.indexOf('controllers')-2] == 'modules') {
+                if(plugin[plugin.indexOf('controllers')-2] === 'modules') {
                     plugin = plugin[plugin.indexOf('controllers')-1]
                 } else {
                     this.log('Please specify plugin name');
@@ -585,10 +585,10 @@ global.system = {
             if(!plugin){
                 var pt = _fns._getCallerFile();
                 plugin = pt.split('/');
-                if(plugin[plugin.indexOf('controllers')-2] == 'modules') {
+                if(plugin[plugin.indexOf('controllers')-2] === 'modules') {
                     plugin = plugin[plugin.indexOf('controllers')-1]
                 } else {
-                    this.log('Please specify plugin name')
+                    this.log('Please specify plugin name');
                 }
             }
             
@@ -618,6 +618,16 @@ global.system = {
             this.log(err);
         }
         
+    },
+    /**
+     * Get define values
+     * @param key define key
+     * 
+     * @author Robin <robin@cubettech.com>
+     * @Date 18-06-2014
+     **/
+    defines: function(key){
+        return __def[key] ? __def[key] : '';
     }
 };
 
@@ -632,9 +642,9 @@ module.exports = function(app){
                 res.end();
                 return false;
             } 
-            if(req.params.mod == 'modules'){
+            if(req.params.mod === 'modules'){
                 res.sendfile(path.join(appPath,'modules',req.params.plugin,'assets',req.params.type,filepath));
-            } else if (req.params.mod == 'themes') {
+            } else if (req.params.mod === 'themes') {
                 res.sendfile(path.join(appPath,'application/views',req.params.plugin,'assets',req.params.type,filepath));
             }
         });
@@ -656,7 +666,29 @@ module.exports = function(app){
         } else {
             commonfns = function(req,res,next){ next(); };
         }
+	
+	//routes
+	var rts = [];
+        for(var c in R.routes) {
+            var rt = R.routes[c];
+            rts[c] = system.getController(rt.controller);
+            var act = rt.action;
+            var rout = rt.route;
+            for(var r in rt.params) {
+                rout += '/' + rt.params[r] + '([A-Za-z0-9_]+)?'
+            }
+            var fn = Helper[rt.fn] ? Helper[rt.fn] : function(req,res,next){
+                next();
+            };
+                        
+            if(rt.type && rt.type === "POST") {
+                app.post(rout, commonfns, fn, rts[c][act]);
+            } else {
+                app.get(rout, commonfns, fn, rts[c][act]);
+            }
+        }
         
+	//plugin routes
         var plugsDir = fs.readdirSync(path.join(appPath,'modules'));
         var prts = [];
         for(var p in plugsDir) {
@@ -677,33 +709,13 @@ module.exports = function(app){
                         next();
                     };
                     
-                    if(rt.type && rt.type == "POST") {
+                    if(rt.type && rt.type === "POST") {
                         app.post(rout,commonfns, fn, prts[c][act]);
                     } else {
                         app.get(rout,commonfns, fn, prts[c][act]);
                     }
 
                 }
-            }
-        }
-        
-        var rts = [];
-        for(var c in R.routes) {
-            var rt = R.routes[c];
-            rts[c] = system.getController(rt.controller);
-            var act = rt.action;
-            var rout = rt.route;
-            for(var r in rt.params) {
-                rout += '/' + rt.params[r] + '([A-Za-z0-9_]+)?'
-            }
-            var fn = Helper[rt.fn] ? Helper[rt.fn] : function(req,res,next){
-                next();
-            };
-                        
-            if(rt.type && rt.type == "POST") {
-                app.post(rout, commonfns, fn, rts[c][act]);
-            } else {
-                app.get(rout, commonfns, fn, rts[c][act]);
             }
         }
 
