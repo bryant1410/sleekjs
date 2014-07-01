@@ -60,7 +60,6 @@
     "urlencode":"latest",
     "json":"latest",
     "method-override":"latest",
-    "errorhandler":"latest",
     "body-parser":"latest",
     "connect-mongo":"latest"
   },

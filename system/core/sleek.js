@@ -46,26 +46,13 @@ app.use(function(req,res,next){
         next();
 });
 
-//handle 500
-app.use(function(err, req, res, next){
-    res.status(err.status || 500);
-    var realPath  = path.join(appPath,'application/views',sleekConfig.theme, 'error.html');
-    if (! fs.existsSync(realPath)) {
-        realPath = path.join(__dirname,'error.html');
-    } 
-    var templateFile = fs.readFileSync(realPath, 'utf8');
-    var template = hbs.compile(templateFile);
-    var compiled = template({ title:'Application Error', error: err.stack });
-    res.send(compiled);
-});
-
 //load custom config libraries
 if(sleekConfig.configLibs){
     for(var i in sleekConfig.configLibs){
         try {
             require(path.join(appPath,'lib', sleekConfig.configLibs[i]+'.js'));
         } catch(err){
-            console.log(err);
+            system.log(err);
         }
     }
     
@@ -79,8 +66,8 @@ if(sleekConfig.logToFile === true) {
     process.stdout.write = (function(write) {
         return function(string, encoding, fd) {
             access.write(string);
-        }
-    })(process.stdout.write)
+        };
+    })(process.stdout.write);
 
     var errorLog = fs.createWriteStream(path.join(appPath, sleekConfig.errorlog), {
         flags:'a'
@@ -88,8 +75,8 @@ if(sleekConfig.logToFile === true) {
     process.stderr.write = (function(write) {
         return function(string, encoding, fd) {
             errorLog.write(string);
-        }
-    })(process.stdout.write)
+        };
+    })(process.stdout.write);
 }
     
 global.system = {
@@ -184,7 +171,7 @@ global.system = {
             var plugsDir = fs.readdirSync(path.join(appPath,'modules'));
             async.eachSeries(plugsDir, function (plug, _pcbk) {
                 var stats = fs.statSync(path.join(appPath,'modules',plug));
-                if(stats.isDirectory() && plug.charAt(0) != '.'){
+                if(stats.isDirectory() && plug.charAt(0) !== '.'){
                     var Ovr = require(path.join(appPath,'modules',plug, 'override.js'));
                     async.eachSeries(Ovr.data, function (ovdta, _ovdbk) {
                         if(ovdta.view === partial){
@@ -199,7 +186,7 @@ global.system = {
                                         } else if (_m === 'append') {
                                             template += dt;
                                         } else {
-                                            template = template;
+                                            template = dt;
                                         }
                                         _ovdbk();
                                     });
@@ -211,7 +198,7 @@ global.system = {
                                     } else if (_m === 'append') {
                                         template += dt;
                                     } else {
-                                        template = template;
+                                        template = dt;
                                     }
                                     _ovdbk();
                                 }
@@ -255,7 +242,7 @@ global.system = {
                 var pt = _fns._getCallerFile();
                 plugin = pt.split('/');
                 if(plugin[plugin.indexOf('controllers')-2] === 'modules') {
-                    plugin = plugin[plugin.indexOf('controllers')-1]
+                    plugin = plugin[plugin.indexOf('controllers')-1];
                 } else {
                     this.log('Please specify plugin name');
                 }
@@ -292,7 +279,7 @@ global.system = {
             var plugsDir = fs.readdirSync(path.join(appPath,'modules'));
             async.eachSeries(plugsDir, function (plug, _pcbk) {
                 var stats = fs.statSync(path.join(appPath,'modules',plug));
-                if(stats.isDirectory() && plug.charAt(0) != '.' && fs.existsSync(path.join(appPath,'modules',plug,'override.js'))){
+                if(stats.isDirectory() && plug.charAt(0) !== '.' && fs.existsSync(path.join(appPath,'modules',plug,'override.js'))){
                     var Ovr = require(path.join(appPath,'modules',plug, 'override.js'));
                     async.eachSeries(Ovr.data, function (_ovDt, _ovcbk) {
                         if(_ovDt.view === view && caller === 'application'){
@@ -412,6 +399,7 @@ global.system = {
      * 
      * @param name file path from view folder
      * @param data Data to compile with template
+     * @param raw if true returns raw template
      * 
      * @author Robin <robin@cubettech.com>
      * @Date 13-11-2013
@@ -479,7 +467,7 @@ global.system = {
                 var pt = _fns._getCallerFile();
                 plugin = pt.split('/');
                 if(plugin[plugin.indexOf('controllers')-2] === 'modules') {
-                    plugin = plugin[plugin.indexOf('controllers')-1]
+                    plugin = plugin[plugin.indexOf('controllers')-1];
                 } else {
                     this.log('Please specify plugin name');
                 }
@@ -509,7 +497,7 @@ global.system = {
                 var pt = _fns._getCallerFile();
                 plugin = pt.split('/');
                 if(plugin[plugin.indexOf('controllers')-2] === 'modules') {
-                    plugin = plugin[plugin.indexOf('controllers')-1]
+                    plugin = plugin[plugin.indexOf('controllers')-1];
                 } else {
                     this.log('Please specify plugin name');
                 }
@@ -561,8 +549,6 @@ global.system = {
                     hbs.registerPartial('getSleekScripts', scripts);
                     res.render(realPath, passedData);
                 }
-
-                
             });
         }
         catch (err) {
@@ -575,6 +561,7 @@ global.system = {
      * @param name file path from view folder
      * @param data Data to compile with template
      * @param plugin name (optional, if calling from plugin)
+     * @param raw if true, returns raw template file without compiling
      * 
      * @author Robin <robin@cubettech.com>
      * @Date 22-01-2014
@@ -586,7 +573,7 @@ global.system = {
                 var pt = _fns._getCallerFile();
                 plugin = pt.split('/');
                 if(plugin[plugin.indexOf('controllers')-2] === 'modules') {
-                    plugin = plugin[plugin.indexOf('controllers')-1]
+                    plugin = plugin[plugin.indexOf('controllers')-1];
                 } else {
                     this.log('Please specify plugin name');
                 }
@@ -633,8 +620,6 @@ global.system = {
 
 module.exports = function(app){
     try {
-
-        
         //file server for plugins & themes
         app.get('/assets/:mod?/:plugin?/:type?/:file*?', function(req, res){
             var filepath = req.params.file + (req.params[0] || '');
@@ -675,17 +660,17 @@ module.exports = function(app){
             var act = rt.action;
             var rout = rt.route;
             for(var r in rt.params) {
-                rout += '/' + rt.params[r] + '([A-Za-z0-9_]+)?'
+                rout += '/' + rt.params[r] + '([A-Za-z0-9_]+)?';
             }
             var fn = Helper[rt.fn] ? Helper[rt.fn] : function(req,res,next){
                 next();
             };
-                        
-            if(rt.type && rt.type === "POST") {
-                app.post(rout, commonfns, fn, rts[c][act]);
-            } else {
-                app.get(rout, commonfns, fn, rts[c][act]);
+            
+            if(!rt.type) {
+                rt.type = 'GET';
             }
+            var meth = rt.type.toLowerCase();
+            app[meth](rout, commonfns, fn, rts[c][act]);
         }
         
 	//plugin routes
@@ -693,7 +678,7 @@ module.exports = function(app){
         var prts = [];
         for(var p in plugsDir) {
             var stats = fs.statSync(path.join(appPath,'modules',plugsDir[p]));
-            if(stats.isDirectory() && plugsDir[p].charAt(0) != '.' && fs.existsSync(path.join(appPath,'modules',plugsDir[p],'routes.js'))){
+            if(stats.isDirectory() && plugsDir[p].charAt(0) !== '.' && fs.existsSync(path.join(appPath,'modules',plugsDir[p],'routes.js'))){
                 var P = require(path.join(appPath,'modules',plugsDir[p], 'routes.js'));
                 for(var c in P.routes) {
                     var rt = P.routes[c];
@@ -702,25 +687,25 @@ module.exports = function(app){
                     var rout = rt.route;
                     
                     for(var r in rt.params) {
-                        rout += '/' + rt.params[r] + '([A-Za-z0-9_]+)?'
+                        rout += '/' + rt.params[r] + '([A-Za-z0-9_]+)?';
                     }
                     
                     var fn = Helper[rt.fn] ? Helper[rt.fn] : function(req,res,next){
                         next();
                     };
                     
-                    if(rt.type && rt.type === "POST") {
-                        app.post(rout,commonfns, fn, prts[c][act]);
-                    } else {
-                        app.get(rout,commonfns, fn, prts[c][act]);
+                    if(!rt.type) {
+                        rt.type = 'GET';
                     }
+                    var meth = rt.type.toLowerCase();
+                    app[meth](rout,commonfns, fn, prts[c][act]);
 
                 }
             }
         }
 
         //handle unknown requests
-        app.get('*/([A-Za-z0-9_]+)', function(req, res){
+        app.all('*/([A-Za-z0-9_]+)', function(req, res){
             var realPath  = path.join(appPath,'application/views',sleekConfig.theme, 'error.html');
             if (! fs.existsSync(realPath)) {
                 realPath = path.join(__dirname,'error.html');
@@ -732,7 +717,41 @@ module.exports = function(app){
         });
 
 
+        //handle 500
+        app.use(function(err, req, res, next){
+            res.status(err.status || 500);
+            var type= req.accepts('html', 'json', 'text');
+            if(type === 'html') {
+                var realPath  = path.join(appPath,'application/views',sleekConfig.theme, 'error.html');
+                var builtinview = false;
+                if (! fs.existsSync(realPath)) {
+                    builtinview = true;
+                    realPath = path.join(__dirname,'error.html');
+                } 
+                var templateFile = fs.readFileSync(realPath, 'utf8');
+                var template = hbs.compile(templateFile);
+                var er = app.get('env') === 'development' ? err.stack : 'Sorry! Something went wrong. Please try later';
+                var compiled = template({ title:'Application Error', error: er });
+                if((app.get('env') !== 'development') && builtinview) {
+                    compiled += '<style type="text/css">pre{text-align: center;}</style>';
+                }
+                res.send(compiled);
+                
+            } else if (type === 'json') {
+                var error = { message: err.message, stack: err.stack };
+                for (var prop in err) error[prop] = err[prop];
+                var json = JSON.stringify({ error: error });
+                res.setHeader('Content-Type', 'application/json');
+                res.end(json);
+              // plain text
+            } else {
+                res.setHeader('Content-Type', 'text/plain');
+                res.end(err.stack || String(err));
+            }
+            
+        });
+
     } catch (e){
         system.log(e);
     }
-}
+};

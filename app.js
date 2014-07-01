@@ -42,7 +42,6 @@ session      = require('express-session'),
 favicon = require('serve-favicon'),
 json        = require('json'),
 urlencoded   = require('urlencode'),
-errorHandler   = require('errorhandler'),
 bodyParser = require('body-parser'),
 methodOverride = require('method-override');
 global.app = express();
@@ -51,6 +50,7 @@ global.sleekConfig = {};
 require(path.join(__dirname,'application/config/config.js'));
    
 app.set('env', sleekConfig.env);
+app.set('x-powered-by', 'Sleek.js');
 // all environments
 app.set('port', process.env.PORT || sleekConfig.appPort);
 app.set('host', sleekConfig.appHost ? sleekConfig.appHost : 'localhost');
@@ -74,7 +74,6 @@ app.use(session({secret: 'CubEtNoDeSlEek',
                  saveUninitialized: true,
                  resave: true}));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(errorHandler());
 app.set('strict routing');
 
 //set Site url
@@ -82,8 +81,8 @@ global.sleekConfig.siteUrl = 'http://'+app.get('host')+':'+app.get('port');
 //get configs
 require('./system/core/sleek.js')(app);
 // development only
-if ('development' == app.get('env')) {
-    //
+if ('development' === app.get('env')) {
+   
 } 
 
 var server = http.createServer(app);
