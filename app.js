@@ -60,14 +60,19 @@ app.engine('html',  exphbs({defaultLayout: 'default',
                             layoutsDir: path.join(__dirname, 'application/layouts/'), extname:".html"})
             ); 
 app.use(favicon(path.join(__dirname, 'public/favicon.ico'))); 
-app.use(bodyParser());
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(bodyParser.json());
 app.use(helmet.xframe());
 app.use(helmet.iexss());
 app.use(helmet.contentTypeOptions());
 app.use(helmet.cacheControl());
 app.use(methodOverride());
-app.use(cookieParser('CubEtNoDeSlEek'));
-app.use(session());
+app.use(cookieParser());
+app.use(session({secret: 'CubEtNoDeSlEek', 
+                 saveUninitialized: true,
+                 resave: true}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(errorHandler());
 app.set('strict routing');
