@@ -1,8 +1,10 @@
 <div class="sub_container">
     <h2>{{title}}</h2>
     
-    <div style="width:80%; text-align: left; margin: 0 auto;">
-    <pre>{{error}}</pre>
+    <div class="err_container">
+<!--        <p class="er_mono">{{error}}</p>-->
+        
+        <pre>{{stack}}</pre>
     </div>
     <div class="footer">
         <p><a href="http://sleekjs.com" target="_blank">Sleek.js</a> © All Rights Reserved 2013</p>
@@ -10,10 +12,12 @@
     </div>
 </div>
 <style type="text/css">
-    /*
+/*
 * Stylesheet
 */
-
+.err_container {
+    width:90%; text-align: left; margin: 0 auto;word-wrap: break-word;
+}
 .sub_container {
     border: 1px solid #E3E3E3;
     margin: 3% auto 0;
@@ -36,5 +40,8 @@
 }
 .sub_container .footer a:hover{
    color: #f15b66;
+}
+.er_mono {
+    font-family: monospace;
 }
 </style>

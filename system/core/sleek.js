@@ -613,8 +613,12 @@ global.system = {
      * @author Robin <robin@cubettech.com>
      * @Date 18-06-2014
      **/
-    defines: function(key){
-        return __def[key] ? __def[key] : '';
+    defines: function(key,value){
+        if(value) {
+            __def[key] = value;
+        } else {
+            return __def[key] ? __def[key] : '';
+        }
     }
 };
 
@@ -721,6 +725,7 @@ module.exports = function(app){
         app.use(function(err, req, res, next){
             res.status(err.status || 500);
             var type= req.accepts('html', 'json', 'text');
+            system.log(err.stack);
             if(type === 'html') {
                 var realPath  = path.join(appPath,'application/views',sleekConfig.theme, 'error.html');
                 var builtinview = false;
@@ -730,8 +735,9 @@ module.exports = function(app){
                 } 
                 var templateFile = fs.readFileSync(realPath, 'utf8');
                 var template = hbs.compile(templateFile);
-                var er = app.get('env') === 'development' ? err.stack : 'Sorry! Something went wrong. Please try later';
-                var compiled = template({ title:'Application Error', error: er });
+                var er = app.get('env') === 'development' ? err : 'Sorry! Something went wrong. Please try later';
+                var ers = app.get('env') === 'development' ? err.stack : '';
+                var compiled = template({ title:'Application Error', error: er, stack:ers });
                 if((app.get('env') !== 'development') && builtinview) {
                     compiled += '<style type="text/css">pre{text-align: center;}</style>';
                 }
