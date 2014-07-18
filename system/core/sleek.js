@@ -534,7 +534,7 @@ global.system = {
 
                         for(var count in data.js) {
                             if(fs.existsSync(path.join(appPath,'modules', plugin, 'assets', 'js', data.js[count]+'.js'))){
-                                scripts += '<script type="text/javascript" src="'+path.join('/assets', plugin, 'js', data.js[count]+'.js')+'" ></script>\n';
+                                scripts += '<script type="text/javascript" src="'+path.join('/assets','modules', plugin, 'js', data.js[count]+'.js')+'" ></script>\n';
                             } else if (fs.existsSync(path.join(appPath,'public', sleekConfig.theme, 'js', data.js[count]+'.js'))) {
                                 scripts += '<script type="text/javascript" src="'+path.join('/',sleekConfig.theme, 'js', data.js[count]+'.js')+'" ></script>\n';
                             } else {
