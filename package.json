@@ -1,6 +1,6 @@
 {
   "name": "sleek.js",
-  "version": "0.1.97",
+  "version": "0.1.98",
   "homepage": "http://www.sleekjs.com",
   "title": "Fully flexible mvc wrapper framework for node.js, developed using express, handlebars, mongodb as base dependecies with pluggable modules & themes support",
   "keywords": [

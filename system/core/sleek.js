@@ -52,7 +52,7 @@ if(sleekConfig.configLibs){
         try {
             require(path.join(appPath,'lib', sleekConfig.configLibs[i]+'.js'));
         } catch(err){
-            system.log(err);
+            console.log(err);
         }
     }
     
@@ -240,7 +240,7 @@ global.system = {
             //if calling from plugins controller
             if(!plugin){
                 var pt = _fns._getCallerFile();
-                plugin = pt.split('/');
+                plugin = pt.split(path.sep);
                 if(plugin[plugin.indexOf('controllers')-2] === 'modules') {
                     plugin = plugin[plugin.indexOf('controllers')-1];
                 } else {
